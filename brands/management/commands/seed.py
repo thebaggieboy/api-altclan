@@ -27,7 +27,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         amount = options.get('amount', 10)
         #print(amount)
-        self._generate_users(amount)
-        self._generate_brand(amount)
+        #self._generate_users(amount)
+        #self._generate_brand(amount)
         self._generate_merchandise(amount)
 

@@ -6,6 +6,8 @@ from brands.models import Merchandise
 from django.utils.text import slugify
 from brands.models import Brand
 from django.conf import settings
+import uuid
+
 User = settings.AUTH_USER_MODEL
 BrandUser = settings.BRAND_USER_MODEL
 class UserManager(BaseUserManager):
@@ -95,11 +97,13 @@ class BrandUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser):
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     email = models.EmailField(
         verbose_name='email address',
         max_length=255,
         unique=True,
     )
+    token = models.CharField(null=True, blank=True, max_length=250)
     is_active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False) # a admin user; non super-user
     admin = models.BooleanField(default=False) # a superuser
@@ -112,6 +116,9 @@ class CustomUser(AbstractBaseUser):
     def get_full_name(self):
         # The user is identified by their email address
         return self.email
+    def get_token(self):
+        # The token is identified by their email address
+        return self.token
 
     def get_short_name(self):
         # The user is identified by their email address
@@ -147,11 +154,13 @@ class CustomUser(AbstractBaseUser):
     objects = UserManager()
 
 class BrandUser(AbstractBaseUser):
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     email = models.EmailField(
         verbose_name='email address',
         max_length=255,
         unique=True,
     )
+    token = models.CharField(null=True, blank=True, max_length=250)
     is_active = models.BooleanField(default=True)
     staff = models.BooleanField(default=False) # a admin user; non super-user
     admin = models.BooleanField(default=False) # a superuser
@@ -168,6 +177,10 @@ class BrandUser(AbstractBaseUser):
     def get_short_name(self):
         # The user is identified by their email address
         return self.email
+    
+    def get_token(self):
+        # The user is identified by their email address
+        return self.token
 
     def __str__(self):
         return self.email
@@ -202,6 +215,7 @@ class BrandUser(AbstractBaseUser):
 
 
 class Profile(models.Model):
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', null=True, blank=True)
     first_name = models.CharField(max_length=250, default='')
     last_name = models.CharField(max_length=250, default='')
@@ -218,6 +232,7 @@ class Profile(models.Model):
         return f'Profile :  {self.user}'
 
 class BrandProfile(models.Model):
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     user = models.OneToOneField(BrandUser, on_delete=models.CASCADE, related_name='brand_profile', null=True, blank=True)
     display_picture = models.ImageField(upload_to='Brands/Display Picture', default='')
     merchandises = models.ManyToManyField(Merchandise)

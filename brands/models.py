@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.utils import timezone
 from django.template.defaultfilters import slugify
@@ -8,6 +9,7 @@ BrandUser = settings.BRAND_USER_MODEL
 from .choices import STATUS, GENDER, COMMUNITY_TYPE
 
 class Brand(models.Model):
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     user = models.OneToOneField(BrandUser, on_delete=models.CASCADE, related_name='brand', null=True, blank=True)
     username = models.CharField(max_length=250)
     brand_name = models.CharField(max_length=250, default='')
@@ -15,7 +17,7 @@ class Brand(models.Model):
     brand_bio = models.TextField(default='')
     brand_type = models.CharField(choices=COMMUNITY_TYPE, default='', max_length=250)
     date_created = models.DateTimeField(default=timezone.now())
-    slug = models.SlugField(null=True, blank=True, default='')
+    slug = models.SlugField(null=True, blank=True, default='', unique=True)
 
     def __str__(self):
         return f'{self.user} Brand'
@@ -28,6 +30,7 @@ class Brand(models.Model):
 
 
 class Merchandise(models.Model):
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     brand = models.OneToOneField(Brand, on_delete=models.CASCADE,  null=True, blank=True)
     merchandise_name = models.CharField(max_length=250, default='')
     merchandise_color = models.CharField(max_length=250, default='')
@@ -50,6 +53,7 @@ class Merchandise(models.Model):
         return super().save(*args, **kwargs)
 
 class MerchandiseGallery(models.Model):
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     merchandise = models.OneToOneField(Merchandise, on_delete=models.CASCADE, related_name='merchandise_gallery', null=True, blank=True)
     image_1 = models.ImageField(upload_to='Merch Image', default='')
     image_2 = models.ImageField(upload_to='Merch Image', default='')
@@ -64,6 +68,7 @@ class MerchandiseGallery(models.Model):
 
 
 class Leads(models.Model):
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     brand_name = models.CharField(max_length=250, null=True, blank=True)
     instagram_username = models.CharField(max_length=250, null=True, blank=True)
     website_link = models.CharField(max_length=250, null=True, blank=True)
@@ -77,6 +82,7 @@ class Leads(models.Model):
         return super().save(*args, **kwargs)
 # ProductOrder, these are the items that have been
 class BillingAddress(models.Model):
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     user = models.OneToOneField(BrandUser, on_delete=models.CASCADE, related_name='address', null=True, blank=True)
     street_address = models.CharField(max_length=250, default='')
     city = models.CharField(max_length=250, default='')
@@ -87,6 +93,7 @@ class BillingAddress(models.Model):
         return f'{self.user}'
     
 class UserBillingAddress(models.Model):
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='user_address', null=True, blank=True)
     street_address = models.CharField(max_length=250, default='')
     city = models.CharField(max_length=250, default='')
@@ -101,6 +108,7 @@ class Gallery(models.Model):
     pass
 
 class Cart(models.Model):
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     quantity = models.IntegerField(null=True, blank=True)
     merchandises = models.ManyToManyField(Merchandise)
@@ -113,6 +121,7 @@ class Cart(models.Model):
 
 # Represent a particular product order
 class Order(models.Model): 
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     address = models.ForeignKey('BillingAddress', on_delete=models.CASCADE)
     order_cart = models.ForeignKey('Cart', on_delete=models.CASCADE, null=True, blank=True)
@@ -125,6 +134,7 @@ class Order(models.Model):
 
 
 class Payment(models.Model):
+    
     stripe_charge_id = models.CharField(max_length=50)
     user = models.ForeignKey(settings.AUTH_USER_MODEL,
                              on_delete=models.SET_NULL, blank=True, null=True)
@@ -138,6 +148,7 @@ class Payment(models.Model):
 
 
 class Coupon(models.Model):
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
     code = models.CharField(max_length=15)
     amount = models.FloatField()
 
@@ -146,7 +157,8 @@ class Coupon(models.Model):
 
 
 class Refund(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True)
     reason = models.TextField()
     accepted = models.BooleanField(default=False)
     email = models.EmailField()

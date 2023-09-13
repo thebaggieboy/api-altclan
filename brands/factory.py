@@ -7,13 +7,16 @@ class BrandFactory(DjangoModelFactory):
     brand_bio = Faker('sentence')
     slug = Faker('slug')
     date_created = Faker('date')
-    #username = 
+    username = Faker('user_name')
+    brand_bio = Faker('sentence')
+    
     class Meta:
         model = 'brands.Brand'
+        
 class MerchandiseFactory(DjangoModelFactory):
     merchandise_name = Faker('company')
     merchandise_color = Faker('color')
-    #price = Faker('price')
+    #merchandise_size = Faker('size')
     slug = Faker('slug')
 
     class Meta:
