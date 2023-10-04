@@ -148,6 +148,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ],
      'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly'
@@ -161,12 +162,6 @@ SIMPLE_JWT = {
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-
-
-# List of origins authorised to make http requests
-
-
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'email'
-
 AUTH_USER_MODEL = 'account.CustomUser'
 BRAND_USER_MODEL='account.BrandUser'

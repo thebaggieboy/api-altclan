@@ -18,20 +18,21 @@ class Brand(models.Model):
     brand_type = models.CharField(choices=COMMUNITY_TYPE, default='', max_length=250)
     date_created = models.DateTimeField(default=timezone.now())
     slug = models.SlugField(null=True, blank=True, default='', unique=True)
-
+    followers = models.CharField(max_length=250, null=True, blank=True)
+    
     def __str__(self):
         return f'{self.user} Brand'
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(f'{self.brand_name}')
+            self.slug = slugify(f'{self.id}')
         return super().save(*args, **kwargs)
 
 
 
 class Merchandise(models.Model):
     id = models.UUIDField(primary_key = True, default = uuid.uuid4, editable = False)
-    brand = models.OneToOneField(Brand, on_delete=models.CASCADE,  null=True, blank=True)
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE,  null=True, blank=True)
     merchandise_name = models.CharField(max_length=250, default='')
     merchandise_color = models.CharField(max_length=250, default='')
     merchandise_size = models.CharField(max_length=250, default='')
